@@ -2,7 +2,7 @@ import { BoxesIcon, ChartColumnBig, ChartColumnDecreasing, CircleCheckBig, HomeI
 
 export default function Sidebar() {
     return (
-        <aside className="bg-zinc-900 w-[1000px] h-full flex-col pt-8">
+        <aside className="bg-zinc-900 min-w-48 h-full flex-col pt-8">
             <div className=" flex flex-col gap-5">
                 <h1 className="font-bold text-zinc-300 text-xl pl-5">Inventrack</h1>
                 <div className="h-0.5 w-full bg-zinc-600"></div>
@@ -26,7 +26,7 @@ export default function Sidebar() {
 
                 <div className="hover:text-zinc-100 flex gap-2">
                     <ChartColumnDecreasing size={22}/>
-                    <a href="/">Histórico de Movimentações</a>
+                    <a href="/historicomovimentacao">Histórico de Movimentações</a>
                 </div>
 
                 <div className="hover:text-zinc-100 flex gap-2">
