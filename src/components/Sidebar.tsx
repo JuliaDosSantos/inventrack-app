@@ -11,7 +11,7 @@ export default function Sidebar() {
             <div className="flex flex-col gap-10 pl-5 pt-5 text-zinc-400">
                 <div className="hover:text-zinc-100 flex gap-2">
                     <BoxesIcon size={22}/>
-                    <a href="/">Produtos</a>
+                    <a href="/relacaoprodutos">Produtos</a>
                 </div>
 
                 <div className="hover:text-zinc-100 flex gap-2">
