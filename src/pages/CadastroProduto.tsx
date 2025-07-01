@@ -5,12 +5,15 @@ import { AuthContext } from "../contexts/AuthContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { xid } from "zod/v4-mini";
+import ComboBox from "../components/ComboBox";
 
 export function CadastroProduto() {
 
     const { isLogged, signIn } = useContext(AuthContext);
 
     const navigate = useNavigate();
+
+    const [selectedOption, setSelectedOption] = useState('');
 
     useEffect(() => {
         if (isLogged) {
@@ -38,7 +41,25 @@ export function CadastroProduto() {
     });
 
     const onSubmit = () => {
-        signIn();
+    };
+
+    const optionsCategoria = [
+        { value: 'acs', label: 'Acessórios e Suportes' },
+        { value: 'arm', label: 'Armazenamento' },
+        { value: 'aud', label: 'Áudio e Vídeo' },
+        { value: 'cec', label: 'Cabo e Conectores' },
+        { value: 'comp', label: 'Componentes Internos' },
+        { value: 'not', label: 'Computadores e Notebooks' },
+        { value: 'gam', label: 'Gamers' },
+        { value: 'imp', label: 'Impressoras e Suprimentos' },
+        { value: 'mon', label: 'Monitores e Telas' },
+        { value: 'per', label: 'Periféricos' },
+        { value: 'red', label: 'Redes e Conectividade' },
+  
+    ];
+
+    const handleChange = (e) => {
+        setSelectedOption(e.target.value);
     };
 
     return (
@@ -63,14 +84,13 @@ export function CadastroProduto() {
                                 />
                             </label>
 
-                            <label className="w-72">
-                                <span className="text-xs text-zinc-200">Categoria: </span>
-                                <input
-                                    className="w-full px-4 py-2 bg-zinc-700 focus-within:outline-none rounded"
-                                    placeholder="Digite a categoria"
-                                    {...register("categoria")}
-                                />
-                            </label>
+                            <ComboBox
+                                options={optionsCategoria}
+                                value={selectedOption}
+                                onChange={handleChange}
+                                label="Categoria:"
+                            />
+
                         </div>
 
                         <div className="flex gap-8">

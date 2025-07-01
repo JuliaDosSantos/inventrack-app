@@ -50,7 +50,9 @@ export function HistoricoMovimentacao() {
                                     <th className="px-4 py-2 border">Categoria</th>
                                     <th className="px-4 py-2 border">Quant. Movimentada</th>
                                     <th className="px-4 py-2 border">Estoque Anterior</th>
-                                    <th className="px-4 py-2 border">Estoque Atual</th>
+                                    <th className="px-4 py-2 border">Estoque Atualizado
+                                        
+                                    </th>
                                 </tr>
                             </thead>
 

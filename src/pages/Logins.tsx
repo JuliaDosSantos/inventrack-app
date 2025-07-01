@@ -4,6 +4,7 @@ import { z } from "zod";
 import { AuthContext } from "../contexts/AuthContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { email } from "zod/v4-mini";
 
 export function Login() {
 
@@ -13,7 +14,7 @@ export function Login() {
 
     useEffect(() => {
         if (isLogged) {
-            navigate("/");
+            navigate("/relacaoprodutos");
         }
     }, [isLogged, navigate]);
 
@@ -34,8 +35,9 @@ export function Login() {
         resolver: zodResolver(formSchema),
     });
 
-    const onSubmit = () => {
-        signIn();
+    const onSubmit = (data: FormType) => {
+        signIn(data.email, data.password);
+        navigate("/relacaoprodutos");
     };
 
     return (

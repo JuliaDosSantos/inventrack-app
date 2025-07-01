@@ -39,7 +39,6 @@ export function EntradaSaida() {
     });
 
     const onSubmit = () => {
-        signIn();
     };
 
     const optionsTipoMovimentacao = [
@@ -47,20 +46,6 @@ export function EntradaSaida() {
         { value: 'sai', label: 'Saída' },
     ];
 
-    const optionsCategoria = [
-        { value: 'acs', label: 'Acessórios e Suportes' },
-        { value: 'arm', label: 'Armazenamento' },
-        { value: 'aud', label: 'Áudio e Vídeo' },
-        { value: 'cec', label: 'Cabo e Conectores' },
-        { value: 'comp', label: 'Componentes Internos' },
-        { value: 'not', label: 'Computadores e Notebooks' },
-        { value: 'gam', label: 'Gamers' },
-        { value: 'imp', label: 'Impressoras e Suprimentos' },
-        { value: 'mon', label: 'Monitores e Telas' },
-        { value: 'per', label: 'Periféricos' },
-        { value: 'red', label: 'Redes e Conectividade' },
-  
-    ];
 
     const handleChange = (e) => {
         setSelectedOption(e.target.value);
@@ -68,7 +53,7 @@ export function EntradaSaida() {
 
     return (
         <div className="h-screen w-screen bg-zinc-800 flex items-center justify-center">
-            <div className="w-2/5 h-[525px] bg-zinc-600 flex flex-col p-10 gap-5 rounded-md items-center">
+            <div className="w-2/5 h-[450px] bg-zinc-600 flex flex-col p-10 gap-5 rounded-md items-center">
                 <h1 className="text-white font-bold text-xl">Movimentação de Produtos</h1>
 
                 <div className="h-0.5 w-full bg-zinc-800" />
@@ -115,14 +100,6 @@ export function EntradaSaida() {
                                 {...register("tipoMovimentacao")}
                             />
                         </label> */}
-
-                        <ComboBox
-                            options={optionsCategoria}
-                            value={selectedOption}
-                            onChange={handleChange}
-                            label="Categoria:"
-                        />
-
 
                         <ComboBox
                             options={optionsTipoMovimentacao}

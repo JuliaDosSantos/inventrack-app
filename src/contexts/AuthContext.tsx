@@ -1,8 +1,9 @@
 import { createContext, useState } from "react";
+import api from "../service/api";
 
 interface AuthContextProps {
   isLogged: boolean;
-  signIn: () => void;
+  signIn: (email: string, senha: string) => void;
   signOut: () => void;
 }
 
@@ -11,9 +12,16 @@ export const AuthContext = createContext({} as AuthContextProps);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLogged, setIsLogged] = useState(false);
 
-  const signIn = () => {
-    // Fake login
-    setIsLogged(true);
+  const signIn = (email:string, senha:string) => {
+    api.post("/usuario/login", {
+      email: email,
+      senha: senha
+    })
+    .then(response => {
+      setIsLogged(true);
+    }).catch(err => {
+          
+    })
   };
 
   const signOut = () => {
