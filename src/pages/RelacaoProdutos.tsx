@@ -6,24 +6,45 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { xid } from "zod/v4-mini";
 import { Product } from "../model/product";
+import api from "../service/api";
 
 export function RelacaoProdutos() {
 
     const { isLogged, signIn } = useContext(AuthContext);
+    const [products, setProducts] = useState<Product[]>([]);
+
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (isLogged) {
-            navigate("/");
-        }
-    }, [isLogged, navigate]);
 
-    const sampleProducts: Product[] = [
-        { id: 1, nomeDoProduto: 'Notebook', preco: 3500, categoria: 'Eletrônicos', quantidade: 30 },
-        { id: 2, nomeDoProduto: 'Teclado Mecânico', preco: 250, categoria: 'Periféricos', quantidade: 20 },
-        { id: 3, nomeDoProduto: 'Monitor 24"', preco: 899, categoria: 'Display', quantidade: 10 },
-    ];
+        console.log("useEffect rodou!");
+
+        const fetchProducts = async () => {
+            
+            api.get("/produto/find-all", {})
+                .then(response => {
+                    
+                    var sampleProducts: Product[] = [];
+                    response.data.forEach(element => {
+                        sampleProducts.push({
+                            id: element.id,
+                            nomeDoProduto: element.nome,
+                            preco: element.preco,
+                            categoria: element.categoria,
+                            quantidade: element.quantidade,
+                        })
+                    });
+
+                    
+                    setProducts(sampleProducts);
+                }).catch(err => {
+                    
+                })
+        }
+
+        fetchProducts();
+    }, []);
 
     interface Props {
         products: Product[];
@@ -50,7 +71,7 @@ export function RelacaoProdutos() {
                             </thead>
 
                             <tbody>
-                                {sampleProducts.map((product) => (
+                                {products.map((product) => (
                                     <tr key={product.id} className="bg-zinc-700 hover:bg-zinc-600">
                                         <td className="px-4 py-2 border">{product.id}</td>
                                         <td className="px-4 py-2 border">{product.nomeDoProduto}</td>

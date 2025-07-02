@@ -2,9 +2,10 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { z } from "zod";
 import { AuthContext } from "../contexts/AuthContext";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ComboBox from "../components/ComboBox";
+import api from "../service/api";
 
 export function EntradaSaida() {
 
@@ -23,7 +24,6 @@ export function EntradaSaida() {
     const formSchema = z.object({
         codigo: z.string(),
         nomeProduto: z.string(),
-        categoria: z.string(),
         tipoMovimentacao: z.string(),
         quantidade: z.number(),
     });
@@ -33,23 +33,59 @@ export function EntradaSaida() {
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors },
     } = useForm<FormType>({
         resolver: zodResolver(formSchema),
     });
 
-    const onSubmit = () => {
+    const onSubmit = (data: FormType) => {
+        api.get("/produto/find-by-id/" + String(data.codigo))
+        .then(response => {
+            console.log(response);
+            var qnt = response.data.quantidade;
+            var qntAnterior = qnt;
+            if (data.tipoMovimentacao === 'Entrada') {
+                qnt = qnt + data.quantidade;
+            } else {
+                qnt = qnt - data.quantidade;
+            }
+
+            api.put("/produto/alterar", {
+                id: response.data.id,
+                nome: response.data.nome,
+                categoria: response.data.categoria,
+                quantidade: qnt,
+                preco: response.data.preco,
+                data: response.data.data
+            })
+            .then(response => {
+            }).catch(err => {
+            })
+
+            api.post("/historico/create", {
+                tipoMovimentacao: data.tipoMovimentacao,
+                idProduto: data.codigo,
+                produto: response.data.nome,
+                categoria: response.data.categoria,
+                "quantidade": data.quantidade,
+                "estoqueAnterior": qntAnterior,
+                "estoqueAtualizado": qnt
+            })
+            .then(response => {
+            }).catch(err => {
+            })
+            
+        }).catch(err => {
+
+        })
     };
 
     const optionsTipoMovimentacao = [
-        { value: 'ent', label: 'Entrada' },
-        { value: 'sai', label: 'Saída' },
+        { value: 'Entrada', label: 'Entrada' },
+        { value: 'Saída', label: 'Saída' },
     ];
 
-
-    const handleChange = (e) => {
-        setSelectedOption(e.target.value);
-    };
 
     return (
         <div className="h-screen w-screen bg-zinc-800 flex items-center justify-center">
@@ -69,7 +105,7 @@ export function EntradaSaida() {
                                 <input
                                     className="w-36 px-4 py-2 bg-zinc-700 focus-within:outline-none rounded"
                                     placeholder="Digite o código"
-                                    {...register("codigo")}
+                                    {...register("codigo", { valueAsNumber: true })}
                                 />
                             </label>
 
@@ -83,42 +119,32 @@ export function EntradaSaida() {
                             </label>
                         </div>
 
-                        {/* <label>
-                            <span className="text-xs text-zinc-200">Categoria:</span>
-                            <input
-                                className="w-full px-4 py-2 bg-zinc-700 focus-within:outline-none rounded"
-                                placeholder="Selecione a categoria"
-                                {...register("categoria")}
-                            />
-                        </label> */}
 
-                        {/* <label>
-                            <span className="text-xs text-zinc-200">Tipo de Movimentação:</span>
-                            <input
-                                className="w-full px-4 py-2 bg-zinc-700 focus-within:outline-none rounded"
-                                placeholder="Selecione a movimentação"
-                                {...register("tipoMovimentacao")}
-                            />
-                        </label> */}
-
-                        <ComboBox
-                            options={optionsTipoMovimentacao}
-                            value={selectedOption}
-                            onChange={handleChange}
-                            label="Tipo de Movimentação:"
+                        <Controller
+                            control={control}
+                            name="tipoMovimentacao"
+                            render={({ field }) => (
+                                <ComboBox
+                                    options={optionsTipoMovimentacao}
+                                    value={field.value}
+                                    onChange={(e) => field.onChange(e.target.value)}
+                                    label="Tipo de Movimentação:"
+                                />
+                            )}
                         />
+
 
                         <label>
                             <span className="text-xs text-zinc-200">Quantidade:</span>
                             <input
                                 className="w-full px-4 py-2 bg-zinc-700 focus-within:outline-none rounded"
                                 placeholder="Digite a quantidade"
-                                {...register("quantidade")}
+                                {...register("quantidade", { valueAsNumber: true })}
                             />
                         </label>
 
                         <div className="flex justify-center mt-2">
-                            <button className="w-24 px-4 py-2 bg-zinc-300 rounded text-zinc-900 mt-2">
+                            <button type="submit" className="w-24 px-4 py-2 bg-zinc-300 rounded text-zinc-900 mt-2">
                                 Salvar
                             </button>
                         </div>

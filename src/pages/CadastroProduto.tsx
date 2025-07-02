@@ -2,10 +2,11 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { z } from "zod";
 import { AuthContext } from "../contexts/AuthContext";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { xid } from "zod/v4-mini";
 import ComboBox from "../components/ComboBox";
+import api from "../service/api";
 
 export function CadastroProduto() {
 
@@ -23,11 +24,9 @@ export function CadastroProduto() {
 
     const formSchema = z.object({
         nomeProduto: z.string(),
-        codigo: z.number(),
         categoria: z.string(),
         quantidade: z.number(),
-        preco: z.number(),
-        data: z.string()
+        preco: z.number()
     });
 
     type FormType = z.infer<typeof formSchema>;
@@ -35,32 +34,40 @@ export function CadastroProduto() {
     const {
         register,
         handleSubmit,
+        setValue,
+        control,
         formState: { errors },
     } = useForm<FormType>({
         resolver: zodResolver(formSchema),
     });
 
-    const onSubmit = () => {
+    const onSubmit = (data: FormType) => {
+        api.post("/produto/create", {
+            nome: data.nomeProduto,
+            categoria: data.categoria,
+            quantidade: data.quantidade,
+            preco: data.preco
+        })
+            .then(response => {
+            }).catch(err => {
+
+            })
     };
 
     const optionsCategoria = [
-        { value: 'acs', label: 'Acessórios e Suportes' },
-        { value: 'arm', label: 'Armazenamento' },
-        { value: 'aud', label: 'Áudio e Vídeo' },
-        { value: 'cec', label: 'Cabo e Conectores' },
-        { value: 'comp', label: 'Componentes Internos' },
-        { value: 'not', label: 'Computadores e Notebooks' },
-        { value: 'gam', label: 'Gamers' },
-        { value: 'imp', label: 'Impressoras e Suprimentos' },
-        { value: 'mon', label: 'Monitores e Telas' },
-        { value: 'per', label: 'Periféricos' },
-        { value: 'red', label: 'Redes e Conectividade' },
-  
-    ];
+        { value: 'Acessórios e Suportes', label: 'Acessórios e Suportes' },
+        { value: 'Armazenamento', label: 'Armazenamento' },
+        { value: 'Áudio e Vídeo', label: 'Áudio e Vídeo' },
+        { value: 'Cabo e Conectores', label: 'Cabo e Conectores' },
+        { value: 'Componentes Internos', label: 'Componentes Internos' },
+        { value: 'Computadores e Notebooks', label: 'Computadores e Notebooks' },
+        { value: 'Gamers', label: 'Gamers' },
+        { value: 'Impressoras e Suprimentos', label: 'Impressoras e Suprimentos' },
+        { value: 'Monitores e Telas', label: 'Monitores e Telas' },
+        { value: 'Periféricos', label: 'Periféricos' },
+        { value: 'Redes e Conectividade', label: 'Redes e Conectividade' },
 
-    const handleChange = (e) => {
-        setSelectedOption(e.target.value);
-    };
+    ];
 
     return (
         <div className="h-screen w-screen bg-zinc-800 flex items-center justify-center">
@@ -84,11 +91,17 @@ export function CadastroProduto() {
                                 />
                             </label>
 
-                            <ComboBox
-                                options={optionsCategoria}
-                                value={selectedOption}
-                                onChange={handleChange}
-                                label="Categoria:"
+                            <Controller
+                                control={control}
+                                name="categoria"
+                                render={({ field }) => (
+                                    <ComboBox
+                                        options={optionsCategoria}
+                                        value={field.value}
+                                        onChange={(e) => field.onChange(e.target.value)}
+                                        label="Categoria:"
+                                    />
+                                )}
                             />
 
                         </div>
@@ -99,7 +112,7 @@ export function CadastroProduto() {
                                 <input
                                     className="w-full px-4 py-2 bg-zinc-700 focus-within:outline-none rounded"
                                     placeholder="Digite a quantidade"
-                                    {...register("quantidade")}
+                                    {...register("quantidade", { valueAsNumber: true })}
                                 />
                             </label>
 
@@ -108,13 +121,13 @@ export function CadastroProduto() {
                                 <input
                                     className="w-full px-4 py-2 bg-zinc-700 focus-within:outline-none rounded"
                                     placeholder="Digite o preço"
-                                    {...register("preco")}
+                                    {...register("preco", { valueAsNumber: true })}
                                 />
                             </label>
                         </div>
 
                         <div className="w-full flex items-center justify-center mt-2">
-                            <button className="w-40 px-4 py-2 bg-zinc-300 rounded text-zinc-900 mt-3">
+                            <button type="submit" className="w-40 px-4 py-2 bg-zinc-300 rounded text-zinc-900 mt-3">
                                 Salvar
                             </button>
                         </div>

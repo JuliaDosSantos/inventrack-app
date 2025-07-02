@@ -12,7 +12,7 @@ export function DashboardLayout() {
   return (
     <div className="w-full h-screen overflow-hidden flex text-zinc-300">
       <Sidebar></Sidebar>
-      <main className="flex flex-col flex-grow">
+      <main className="flex flex-col flex-grow bg-zinc-800">
         <Outlet />
       </main>
     </div>

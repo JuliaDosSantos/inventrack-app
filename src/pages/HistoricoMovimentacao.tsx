@@ -7,27 +7,53 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { xid } from "zod/v4-mini";
 import { Product } from "../model/product";
 import { Movimentacao } from "../model/movimentacao";
+import api from "../service/api";
 
 export function HistoricoMovimentacao() {
 
     const { isLogged, signIn } = useContext(AuthContext);
+    const [historicos, setHistoricos] = useState<Movimentacao[]>([]);
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (isLogged) {
-            navigate("/");
-        }
-    }, [isLogged, navigate]);
 
-    const sampleProducts: Movimentacao[] = [
-        {id: 1, dataHora: '26/06/2025', tipoMovimentacao: 'Entrada', IdProduto: 1, nomeDoProduto: 'Notebook', categoria: 'Eletrônicos', quantidade: 30, estoqueAnterior: 0, estoqueAtual: 30},
-        {id: 2, dataHora: '26/06/2025', tipoMovimentacao: 'Entrada', IdProduto: 2, nomeDoProduto: 'Teclado Mecânico', categoria: 'Periféricos', quantidade: 20, estoqueAnterior: 0, estoqueAtual: 20},
-        {id: 3, dataHora: '26/06/2025', tipoMovimentacao: 'Saída', IdProduto: 3, nomeDoProduto: 'Monitor 24"', categoria: 'Display', quantidade: 20, estoqueAnterior: 30, estoqueAtual: 10}
-    ]
+        console.log("useEffect rodou!");
+
+        const fetchProducts = async () => {
+            
+            api.get("/historico/find-all", {})
+                .then(response => {
+                    
+                    var sampleProducts: Movimentacao[] = [];
+                    response.data.forEach(element => {
+                        sampleProducts.push({
+                            id: element.id,
+                            dataHora: element.data,
+                            tipoMovimentacao: element.tipoMovimentacao,
+                            IdProduto: element.idProduto,
+                            nomeDoProduto: element.produto,
+                            categoria: element.categoria,
+                            quantidade: element.quantidade,
+                            estoqueAnterior: element.estoqueAnterior,
+                            estoqueAtual: element.estoqueAtualizado
+                        })
+                    });
+
+                    
+                    setHistoricos(sampleProducts);
+                }).catch(err => {
+                    
+                })
+        }
+
+        fetchProducts();
+    }, []);
+
+    
 
     interface Props {
-        products: Product[];
+        products: Movimentacao[];
     }
 
     return (
@@ -57,7 +83,7 @@ export function HistoricoMovimentacao() {
                             </thead>
 
                             <tbody>
-                                {sampleProducts.map((product) => (
+                                {historicos.map((product) => (
                                     <tr key={product.id} className="bg-zinc-700 hover:bg-zinc-600">
                                         <td className="px-4 py-2 border">{product.id}</td>
                                         <td className="px-4 py-2 border">{product.dataHora}</td>
